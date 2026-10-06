@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Special Moment</title>
+    <!-- Estetik, Whimsical El Yazısı Fontu (Caveat) Eklendi -->
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        /* 1. GENEL GÖVDE VE QUIZ EKRANI ARKA PLANI */
+        body {
+            background-color: #ffe6eb;
+            background-image: url('arkaplan-quiz.jpg'); 
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Quiz Section Design */
+        #quiz-section { 
+            text-align: center; 
+            margin-top: 50px; 
+            padding: 20px;
+            max-width: 800px;
+        }
+        
+        #options-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .option-card { 
+            cursor: pointer; 
+            border: 3px solid #ffb3c6; 
+            border-radius: 15px; 
+            padding: 15px; 
+            background: rgba(255, 255, 255, 0.9); 
+            transition: transform 0.3s, box-shadow 0.3s;
+            width: 200px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .option-card:hover { 
+            transform: scale(1.05); 
+            box-shadow: 0 5px 15px rgba(216, 27, 96, 0.3);
+        }
+        .option-img { 
+            width: 160px; 
+            height: 160px; 
+            object-fit: contain; 
+            border-radius: 10px; 
+            background-color: #fff; 
+        }
+
+        /* Tam Ekran Overlay (Doğru/Yanlış) */
+        #fullscreen-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(255, 230, 235, 0.95);
+            z-index: 9999;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+        #fullscreen-overlay img {
+            max-width: 80vw;
+            max-height: 65vh;
+            object-fit: contain;
+            border-radius: 15px;
+            border: 5px solid #ffb3c6;
+            box-shadow: 0 10px 30px rgba(216, 27, 96, 0.3);
+        }
+        #fullscreen-overlay h2 {
+            color: #d81b60;
+            font-size: 2.5em;
+            margin-top: 25px;
+            font-weight: bold;
+        }
+        
+        /* 2. EN SON AÇILAN ANA SAYFA (MAİN CONTENT) VE ARKA PLANI */
+        #main-content { 
+            display: none; 
+            width: 100%; 
+            max-width: 900px; 
+            margin: 0 auto; 
+            padding: 40px 20px; 
+            text-align: center; 
+            background-image: url('arkaplan-main.jpg'); 
+            background-size: cover;
+            background-position: center;
+            border-radius: 20px;
+            box-sizing: border-box;
+        }
+
+        /* Kayan Mektup Alanı */
+        .letter-container {
+            width: 100%;
+            height: 400px;
+            overflow: hidden;
+            position: relative;
+            background-color: rgba(255, 240, 245, 0.95);
+            border: 3px dashed #ffb3c6;
+            border-radius: 20px;
+            margin-bottom: 50px;
+            box-shadow: inset 0 0 20px rgba(255, 179, 198, 0.3);
+        }
+        .scrolling-text {
+            position: absolute;
+            width: 100%;
+            animation: scrollUp 45s linear infinite;
+            padding: 30px;
+            box-sizing: border-box;
+            font-family: 'Caveat', cursive; /* Estetik, Whimsical El Yazısı Fontu */
+            font-size: 1.8em; 
+            line-height: 1.5;
+            color: #000000; /* Siyah renk */
+            font-weight: 700;
+            white-space: pre-wrap;
+        }
+        @keyframes scrollUp {
+            0% { top: 100%; }
+            100% { top: -150%; }
+        }
+
+        /* Scratch Cards */
+        .scratch-container { 
+            display: flex; 
+            flex-wrap: wrap; 
+            justify-content: center; 
+            gap: 30px; 
+            margin-bottom: 50px; 
+        }
+        .scratch-card { 
+            position: relative; 
+            width: 260px; 
+            height: 320px; 
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            border-radius: 12px;
+            background-color: white;
+            overflow: hidden;
+        }
+        .scratch-base { 
+            position: absolute; 
+            top: 0; left: 0; 
+            width: 100%; height: 100%; 
+            border-radius: 12px; 
+            object-fit: contain; 
+        }
+        .scratch-canvas { 
+            position: absolute; 
+            top: 0; left: 0; 
+            width: 100%; height: 100%; 
+            cursor: crosshair; 
+            border-radius: 12px; 
+        }
+        
+        /* Video Section */
+        .video-section h2 { 
+            color: #d81b60; 
+            font-size: 2.2em;
+            margin-bottom: 20px;
+            font-family: 'Georgia', serif;
+            font-style: italic; 
+        }
+        video { 
+            border: 6px solid #ffb3c6; 
+            border-radius: 20px; 
+            width: 100%; 
+            max-width: 700px; 
+            box-shadow: 0 10px 30px rgba(216, 27, 96, 0.2);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- TAM EKRAN OVERLAY -->
+    <div id="fullscreen-overlay">
+        <img id="overlay-img" src="" alt="Result">
+        <h2 id="overlay-msg"></h2>
+    </div>
+
+    <div id="quiz-section">
+        <h1 id="question-text" style="color: #d81b60; font-size: 2.2em; margin-bottom: 10px; text-shadow: 1px 1px 3px white;">Loading...</h1>
+        <div id="options-container"></div>
+    </div>
+
+    <div id="main-content">
+        <div class="letter-container">
+            <div class="scrolling-text">Güzel sevgilim,
+
+Sanki senden önceki her gün, adını bilmediğim bir uykunun içindeydim; sen geldin ve ben ilk defa seninle nefes almayı, gerçeği hissetmeyi öğrendim. Senden önce geçen onca zaman, sadece bu ana varmak için atılmış sessiz adımlarmış meğer. Dünyanın o sağır edici gürültüsünde kaybolmuşken, seninle hayatın ta kendisini buldum. Şimdi kutladığımız bu 8. ay, sadece takvimdeki bir sayı değil; var olmadığım o karanlık geçmişten çıkıp seninle doğuşumun ve bu sonsuzluğa adım atışımın kanıtı. İlk nefesimi seninle aldım; biliyorum ki bu hayatın sonu geldiğinde, son nefesimizi de yine birbirimizin kollarında, aynı huzurla vereceğiz. İyi ki hayatımdasın sevgilim, 8. ayımız kutlu olsun 🌀</div>
+        </div>
+
+        <div class="scratch-container">
+            <div class="scratch-card">
+                <img src="fotograf1.jpg" class="scratch-base" alt="Memory">
+                <canvas class="scratch-canvas"></canvas>
+            </div>
+            <div class="scratch-card">
+                <img src="fotograf2.jpg" class="scratch-base" alt="Memory">
+                <canvas class="scratch-canvas"></canvas>
+            </div>
+            <div class="scratch-card">
+                <img src="fotograf3.jpg" class="scratch-base" alt="Memory">
+                <canvas class="scratch-canvas"></canvas>
+            </div>
+        </div>
+
+        <div class="video-section">
+            <h2>One of our special moments</h2>
+            <video controls>
+                <source src="1000082314.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        </div>
+    </div>
+
+    <script>
+        const quizData = [
+            {
+                question: "What is your favorite flower?",
+                options: [
+                    { img: "cicek-secenek1.jpg", text: "Spider Lily", isCorrect: false },
+                    { img: "cicek-secenek2.jpg", text: "Orchid", isCorrect: false },
+                    { img: "cicek-secenek3.jpg", text: "Lily", isCorrect: true },
+                    { img: "cicek-secenek4.jpg", text: "Rose", isCorrect: false }
+                ]
+            },
+            {
+                question: "What shape was the hair clip I gave you as one of your first gifts?",
+                options: [
+                    { img: "toka-secenek1.jpg", text: "Sun", isCorrect: false },
+                    { img: "toka-secenek2.jpg", text: "Flower", isCorrect: false },
+                    { img: "toka-secenek3.jpg", text: "Moon", isCorrect: false },
+                    { img: "toka-secenek4.jpg", text: "Star", isCorrect: true }
+                ]
+            },
+            {
+                question: "Which cassette tape would you get first?",
+                options: [
+                    { img: "kaset-secenek1.jpg", text: "Cassette 1", isCorrect: false },
+                    { img: "kaset-secenek2.jpg", text: "Cassette 2", isCorrect: false },
+                    { img: "kaset-secenek3.jpg", text: "Cassette 3", isCorrect: true },
+                    { img: "kaset-secenek4.jpg", text: "Cassette 4", isCorrect: false }
+                ]
+            },
+            {
+                question: "Our favorite season",
+                options: [
+                    { img: "mevsim-ilkbahar.jpg", text: "Spring", isCorrect: false },
+                    { img: "mevsim-yaz.jpg", text: "Summer", isCorrect: false },
+                    { img: "mevsim-sonbahar.jpg", text: "Autumn", isCorrect: true },
+                    { img: "mevsim-kis.jpg", text: "Winter", isCorrect: false }
+                ]
+            }
+        ];
+
+        let currentQuestion = 0;
+
+        function loadQuestion() {
+            const q = quizData[currentQuestion];
+            document.getElementById('question-text').innerText = q.question;
+            const optionsDiv = document.getElementById('options-container');
+            optionsDiv.innerHTML = '';
+
+            q.options.forEach(opt => {
+                const div = document.createElement('div');
+                div.className = 'option-card';
+                div.onclick = () => checkAnswer(opt.isCorrect);
+                div.innerHTML = `<img src="${opt.img}" class="option-img"><span style="color:#d81b60; font-size:1.2em; font-weight:bold; display:block; margin-top:10px; text-align:center;">${opt.text}</span>`;
+                optionsDiv.appendChild(div);
+            });
+        }
+
+        function checkAnswer(isCorrect) {
+            const optionsCards = document.querySelectorAll('.option-card');
+            optionsCards.forEach(card => card.style.pointerEvents = 'none'); 
+
+            const overlay = document.getElementById('fullscreen-overlay');
+            const overlayImg = document.getElementById('overlay-img');
+            const overlayMsg = document.getElementById('overlay-msg');
+
+            if (isCorrect) {
+                overlayImg.src = "dogru.jpg"; 
+                overlayMsg.innerText = "Good job my love ❤";
+                overlay.style.display = 'flex';
+                
+                setTimeout(() => {
+                    overlay.style.display = 'none';
+                    currentQuestion++;
+                    if (currentQuestion < quizData.length) {
+                        loadQuestion();
+                        optionsCards.forEach(card => card.style.pointerEvents = 'auto');
+                    } else {
+                        document.getElementById('quiz-section').style.display = 'none';
+                        document.getElementById('main-content').style.display = 'block';
+                        initScratchCards();
+                    }
+                }, 2000);
+
+            } else {
+                overlayImg.src = "yanlis.jpg"; 
+                overlayMsg.innerText = "Think again my love 🥺";
+                overlay.style.display = 'flex';
+
+                setTimeout(() => {
+                    overlay.style.display = 'none';
+                    optionsCards.forEach(card => card.style.pointerEvents = 'auto');
+                }, 2000);
+            }
+        }
+
+        function initScratchCards() {
+            const canvases = document.querySelectorAll('.scratch-canvas');
+            canvases.forEach(canvas => {
+                const ctx = canvas.getContext('2d');
+                canvas.width = 260;
+                canvas.height = 320;
+                
+                ctx.fillStyle = '#b3b3b3';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                ctx.font = "bold 24px 'Segoe UI'";
+                ctx.fillStyle = "#ffffff";
+                ctx.textAlign = "center";
+                ctx.textBaseline = "middle";
+                ctx.fillText("Scratch Me!", canvas.width/2, canvas.height/2);
+
+                let isDrawing = false;
+
+                function getCoordinates(e) {
+                    const rect = canvas.getBoundingClientRect();
+                    const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+                    const clientY = e.clientY || (e.touches && e.touches[0].clientY);
+                    return {
+                        x: clientX - rect.left,
+                        y: clientY - rect.top
+                    };
+                }
+
+                function scratch(e) {
+                    if (!isDrawing) return;
+                    const {x, y} = getCoordinates(e);
+                    
+                    ctx.globalCompositeOperation = 'destination-out';
+                    ctx.beginPath();
+                    ctx.arc(x, y, 25, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+
+                canvas.addEventListener('mousedown', () => isDrawing = true);
+                canvas.addEventListener('mousemove', scratch);
+                window.addEventListener('mouseup', () => isDrawing = false);
+                
+                canvas.addEventListener('touchstart', (e) => { isDrawing = true; scratch(e); e.preventDefault(); }, {passive: false});
+                canvas.addEventListener('touchmove', (e) => { scratch(e); e.preventDefault(); }, {passive: false});
+                window.addEventListener('touchend', () => isDrawing = false);
+            });
+        }
+
+        window.onload = loadQuestion;
+    </script>
+</body>
+</html>
